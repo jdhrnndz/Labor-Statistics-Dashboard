@@ -3,54 +3,48 @@
     <head>
         <meta charset="UTF-8"/>
         <title>LSD</title>
-        <script src="build/react.js"></script>
-        <script src="build/react-dom.js"></script>
+        <script src="build/react.min.js"></script>
+        <script src="build/react-dom.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+        <link rel="stylesheet" href="styles/lsd.css"/>
     </head>
     <body>
-        <div id="work_hour_trend">
+        <input type="range" id="slider" min="1" max="100" value="50" tick="10">
+        <h2> If you want to see your data on your next visit, use non-incognito/non-private browsing </h2>
+        <div id="data_scope">
             <h1>
-                Work Hour Trend
+                Data Scope
                 <select>   
                     <option>by week</option>
                     <option>by months</option>
                     <option>by year</option>
                 </select>
             </h1>
-            <p>area range chart, must be editable inline</p>
+        </div>
+        <div id="work_hour_trend">
+            <div id="lsd-slider-vertical"></div>
+            <h1>Work Hour Trend</h1>
+            <p>area range chart, must be editable inline, an empty (placeholder) for new entries at the end of the chart, add animation when merging new data with the existing</p>
         </div>
 
         <div id="earliest_time_in">
-            <h1>
-                Earliest Time-in
-                <select>
-                    <option>this week</option>
-                    <option>this month</option>
-                    <option>this year</option>
-                </select>
-            </h1>
+            <h1>Earliest Time-in</h1>
         </div>
 
         <div id="latest_time_in">
-            <h1>
-                Latest Time-in
-                <select>
-                    <option>this week</option>
-                    <option>this month</option>
-                    <option>this year</option>
-                </select>
-            </h1>
+            <h1>Latest Time-in</h1>
+        </div>
+
+        <div id="earliest_time_out">
+            <h1>Earliest Time-out</h1>
+        </div>
+
+        <div id="latest_time_out">
+            <h1>Latest Time-out</h1>
         </div>
 
         <div id="avg_work_hours">
-            <h1>
-                Average Working Hours
-                <select>
-                    <option>by week</option>
-                    <option>by months</option>
-                    <option>by year</option>
-                </select>
-            </h1>
+            <h1>Average Working Hours</h1>
         </div>
 
         <div id="leaves_available">
@@ -58,19 +52,67 @@
         </div>
 
         <div id="meetings">
-            <h1>
-                Meetings
-                <select>
-                    <option>this week</option>
-                    <option>this month</option>
-                    <option>this year</option>
-                </select>
-            </h1>
+            <h1>Meetings</h1>
         </div>
 
         <div id="form">
             <h1>Add Time-in/Time-out Data</h1>
             <p>Add new column in area range chart with slider input and a confirm button</p>
         </div>
+
+        <script type="text/babel">
+            
+            var mouseXY = {
+              x: 0,
+              y: 0
+            };
+
+            document.onmousemove = function(e) {
+              e = e || window.event;
+
+              mouseXY.x = e.pageX;
+              mouseXY.y = e.pageY;
+            }
+
+            var LSDSliderVertical = React.createClass({
+              getInitialState: function(){
+                return ({dragging: false,
+                top: 1});
+              },
+              componentWillMount: function() {
+                document.addEventListener("mousemove", this.dragEvent);
+                document.addEventListener("mouseup", this.dragStop);
+              },
+              dragStart: function() {
+                this.setState({
+                  dragging: true
+                });
+              },
+              dragStop: function() {
+                this.setState({
+                  dragging: false
+                });
+              },
+              dragEvent: function() {
+                if (this.state.dragging){
+                    console.log(mouseXY);
+                  this.setState({top: this.state.top+1});
+                }
+              },
+              render: function() {
+                var topValue = this.state.top;
+              
+                return ( < div className = "lsd-slider-vertical" >
+                  < div className = "lsd-slider-range" > < /div> < span className = "lsd-slider-thumb lsd-sun-handle"
+                  onMouseDown = {
+                    this.dragStart
+                  } style={{top: topValue + "%"}} > < /span> < /div > );
+              }
+            });
+
+            ReactDOM.render( < LSDSliderVertical / > ,
+              document.getElementById('lsd-slider-vertical')
+            );
+        </script>
     </body>
 </html>
