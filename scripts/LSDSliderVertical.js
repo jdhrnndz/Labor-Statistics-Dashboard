@@ -8,6 +8,7 @@ var LSDSliderVertical = React.createClass({
   componentWillMount: function() {
     document.addEventListener("mousemove", this.dragEvent);
     document.addEventListener("mouseup", this.dragStop);
+    
   },
   dragStart: function() {
     this.setState ({
@@ -24,13 +25,16 @@ var LSDSliderVertical = React.createClass({
       this.setState({top: this.state.top+1});
       console.log(mouseXY);
     }
+    console.log(cumulativeOffset(this.componentInstance));
   },
   render: function() {
     var topValue = this.state.top;
-  
+    var heightValue = this.props.height;
     return (
       <div
-        className="lsd-slider-vertical">
+        className="lsd-slider-vertical"
+        style={{height: heightValue}}
+        ref={(ref) => this.componentInstance = ref}>
         <div
           className="lsd-slider-range"/>
         <span
@@ -42,10 +46,10 @@ var LSDSliderVertical = React.createClass({
   }
 });
 
-ReactDOM.render( < LSDSliderVertical key="1" / > ,
+ReactDOM.render( < LSDSliderVertical key="1" height="200px"/ > ,
   document.getElementById('lsd-slider-vertical-1')
 );
 
-ReactDOM.render( < LSDSliderVertical key="2" / > ,
+ReactDOM.render( < LSDSliderVertical key="2" height="200px"/ > ,
   document.getElementById('lsd-slider-vertical-2')
 );
