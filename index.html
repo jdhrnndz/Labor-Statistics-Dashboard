@@ -3,10 +3,40 @@
     <head>
         <meta charset="UTF-8"/>
         <title>LSD</title>
+        <script src="scripts/domready.js"></script>
         <script src="build/react.min.js"></script>
         <script src="build/react-dom.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
         <link rel="stylesheet" href="styles/lsd.css"/>
+        <script>
+          DomReady.ready(function(){
+            mouseXY = {
+              x: 0,
+              y: 0
+            };
+
+            document.onmousemove = function(e) {
+              e = e || window.event;
+
+              mouseXY.x = e.pageX;
+              mouseXY.y = e.pageY;
+            }
+
+            cumulativeOffset = function(element) {
+              var top = 0, left = 0;
+              do {
+                top += element.offsetTop  || 0;
+                left += element.offsetLeft || 0;
+                element = element.offsetParent;
+              } while(element);
+
+              return ({
+                top: top,
+                left: left
+              });
+            }
+          });
+        </script>
     </head>
     <body>
         <input type="range" id="slider" min="1" max="100" value="50" tick="10">
@@ -22,7 +52,8 @@
             </h1>
         </div>
         <div id="work_hour_trend">
-            <div id="lsd-slider-vertical"></div>
+            <div id="lsd-slider-vertical-1" key="1"></div>
+            <div id="lsd-slider-vertical-2" key="2"></div>
             <h1>Work Hour Trend</h1>
             <p>area range chart, must be editable inline, an empty (placeholder) for new entries at the end of the chart, add animation when merging new data with the existing</p>
         </div>
@@ -60,59 +91,7 @@
             <p>Add new column in area range chart with slider input and a confirm button</p>
         </div>
 
-        <script type="text/babel">
-            
-            var mouseXY = {
-              x: 0,
-              y: 0
-            };
 
-            document.onmousemove = function(e) {
-              e = e || window.event;
-
-              mouseXY.x = e.pageX;
-              mouseXY.y = e.pageY;
-            }
-
-            var LSDSliderVertical = React.createClass({
-              getInitialState: function(){
-                return ({dragging: false,
-                top: 1});
-              },
-              componentWillMount: function() {
-                document.addEventListener("mousemove", this.dragEvent);
-                document.addEventListener("mouseup", this.dragStop);
-              },
-              dragStart: function() {
-                this.setState({
-                  dragging: true
-                });
-              },
-              dragStop: function() {
-                this.setState({
-                  dragging: false
-                });
-              },
-              dragEvent: function() {
-                if (this.state.dragging){
-                    console.log(mouseXY);
-                  this.setState({top: this.state.top+1});
-                }
-              },
-              render: function() {
-                var topValue = this.state.top;
-              
-                return ( < div className = "lsd-slider-vertical" >
-                  < div className = "lsd-slider-range" > < /div> < span className = "lsd-slider-thumb lsd-sun-handle"
-                  onMouseDown = {
-                    this.dragStart
-                  } style={{top: topValue + "%"}} > < /span> < /div > );
-              }
-            });
-
-            ReactDOM.render( < LSDSliderVertical / > ,
-              document.getElementById('lsd-slider-vertical')
-            );
-        </script>
+        <script type="text/babel" src="scripts/LSDSliderVertical.js"></script>
     </body>
 </html>
