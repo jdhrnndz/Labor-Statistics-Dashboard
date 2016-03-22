@@ -29,8 +29,14 @@ var LsdSliderThumb = React.createClass({
       dragging: false
     });
   },
-  dragEvent: function() {
+  dragEvent: function(e) {
     if (this.state.dragging) {
+      /*
+        The next two lines prevent the cursor to select text and items while dragging the slider handle
+      */
+      if(e.stopPropagation) e.stopPropagation();
+      if(e.preventDefault) e.preventDefault();
+
       if(this.props.orientation == "x") {
       	var newLeftValue = ((mouseXY.x-this.props.containerPosition.left)/this.props.containerWidth)*100;
         newLeftValue = (newLeftValue<0)?0:((newLeftValue>100)?100:newLeftValue);
