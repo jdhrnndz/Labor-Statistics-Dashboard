@@ -2,13 +2,20 @@ var LSDSliderVertical = React.createClass({
   getInitialState: function(){
     return ({
       dragging: false,
-      top: 0
+      containerTop: 0,
+      top: 0,
+      left: 0
     });
   },
   componentWillMount: function() {
     document.addEventListener("mousemove", this.dragEvent);
     document.addEventListener("mouseup", this.dragStop);
-    
+  },
+  componentDidMount: function() {
+    var componentPosition = cumulativeOffset(this.componentInstance);
+    this.setState({
+      containerTop: componentPosition.top,
+    });
   },
   dragStart: function() {
     this.setState ({
@@ -22,10 +29,11 @@ var LSDSliderVertical = React.createClass({
   },
   dragEvent: function() {
     if (this.state.dragging){
-      this.setState({top: this.state.top+1});
-      console.log(mouseXY);
+      var verticalOffset = 5;
+      var newTopValue = ((mouseXY.y-this.state.containerTop)/this.props.height)*100;
+      var threshold = (verticalOffset/this.props.height)*100;
+      this.setState({top: (newTopValue<0-verticalOffset)?0-verticalOffset:((newTopValue>100-verticalOffset)?100-verticalOffset:newTopValue)});
     }
-    console.log(cumulativeOffset(this.componentInstance));
   },
   render: function() {
     var topValue = this.state.top;
@@ -33,7 +41,7 @@ var LSDSliderVertical = React.createClass({
     return (
       <div
         className="lsd-slider-vertical"
-        style={{height: heightValue}}
+        style={{height: heightValue+"px"}}
         ref={(ref) => this.componentInstance = ref}>
         <div
           className="lsd-slider-range"/>
@@ -46,10 +54,10 @@ var LSDSliderVertical = React.createClass({
   }
 });
 
-ReactDOM.render( < LSDSliderVertical key="1" height="200px"/ > ,
+ReactDOM.render( < LSDSliderVertical key="1" height="200"/ > ,
   document.getElementById('lsd-slider-vertical-1')
 );
 
-ReactDOM.render( < LSDSliderVertical key="2" height="200px"/ > ,
+ReactDOM.render( < LSDSliderVertical key="2" height="200"/ > ,
   document.getElementById('lsd-slider-vertical-2')
 );

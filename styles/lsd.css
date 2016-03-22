@@ -1,22 +1,22 @@
 .lsd-slider-vertical {
   position: relative;
-  width: .4em;
-  border-radius: .4em;
-  background-color: #B4B4B4;
+  width: 5px;
+  border-radius: 5px;
+  background-color: #E3DDD8;
   z-index: 1;
 }
 
 .lsd-slider-vertical .lsd-slider-thumb {
   position: absolute;
   z-index: 2;
-  width: 1em;
-  height: 1em;
+  width: 16px;
+  height: 16px;
   cursor: default;
   -ms-touch-action: none;
   touch-action: none;
-  left: -.54em;
+  left: -8.64px;
   margin-left: 0;
-  margin-bottom: -.4em;
+  margin-bottom: 8.64px;
   border-radius: 50%;
 }
 
