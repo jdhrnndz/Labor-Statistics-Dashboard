@@ -27,17 +27,25 @@ var LsdSliderHandle = React.createClass({
   /*
   *  TODO: Fix warning -> "getInitialState was defined on LsdSlider, a plain
   *  JavaScript class. This is only supported for classes created using
-  *  React.createClass. Did you mean to define a state property instead?"
+  *  React.createClass. Did you mean to define a state property instead?".
   *
   *  TODO: Fix handle offset to slider bar
+  *  
+  *  TODO: Fix bug, resizing window breaks offset of handle in vertical slider.
+  *  The horizontal slider seems to be clear of this bug.
   */
   getInitialState: function() {
     return {
       dragging: false,
       position: {
-        top: -9.5/200*100,
-        left: -9.5/300*100
-      }
+        top: 0,
+        left: 0
+      },
+      dimension: {
+        width: 0,
+        height: 0
+      },
+      borderWidth: 0
     };
   },
   componentWillMount: function() {
@@ -53,6 +61,19 @@ var LsdSliderHandle = React.createClass({
     */
     document.addEventListener("mousemove", this.dragEvent);
     document.addEventListener("mouseup", this.dragStop);
+  },
+  componentDidMount: function() {
+    this.setState({
+      dimension: {
+        width: this.componentInstance.offsetWidth,
+        height: this.componentInstance.offsetHeight
+      },
+      position: {
+        top: this.componentInstance.offsetHeight/(2*this.props.containerHeight)*-100,
+        left: this.componentInstance.offsetWidth/(2*this.props.containerWidth)*-100
+      },
+      borderWidth: parseInt(getComputedStyle(this.componentInstance).getPropertyValue("border-width"))
+    });
   },
   dragStart: function() {
     this.setState ({
@@ -79,12 +100,13 @@ var LsdSliderHandle = React.createClass({
         /*
         *  Normalization of mouse coordinates relative to the slider.
         */
-      	var newLeft = ((mouseXY.x-this.props.containerPosition.left-12)/this.props.containerWidth)*100;
+      	var newLeft = ((mouseXY.x-this.props.containerPosition.left-this.state.dimension.width/2)/this.props.containerWidth)*100;
         /*
         *  Forces a threshold to the left value to prevent handle from going
         *  outside the slider.
         */
-        newLeft = (newLeft<0)?0:((newLeft>100)?100:newLeft);
+        var thresholdOffset = (this.state.dimension.width/2)/this.props.containerWidth*100;
+        newLeft = (newLeft<0-thresholdOffset)?0-thresholdOffset:((newLeft>100-thresholdOffset)?100-thresholdOffset:newLeft);
 
         this.setState({
           position: {
@@ -96,12 +118,13 @@ var LsdSliderHandle = React.createClass({
         /*
         *  Normalization of mouse coordinates relative to the slider.
         */
-        var newTop = ((mouseXY.y-this.props.containerPosition.top-12)/this.props.containerHeight)*100;
+        var newTop = ((mouseXY.y-this.props.containerPosition.top-this.state.dimension.height/2)/this.props.containerHeight)*100;
         /*
         *  Forces a threshold to the top value to prevent handle from going
         *  outside the slider.
         */
-        newTop = (newTop<0)?0:((newTop>100)?100:newTop);
+        var thresholdOffset = (this.state.dimension.height/2)/this.props.containerHeight*100;
+        newTop = (newTop<0-thresholdOffset)?0-thresholdOffset:((newTop>100-thresholdOffset)?100-thresholdOffset:newTop);
 
         this.setState({
           position: {
@@ -116,16 +139,16 @@ var LsdSliderHandle = React.createClass({
     *  This is PROBABLY better than bothering to check the orientation and 
     *  setting the style to left xor top only.
     */
-    var style = {
-      left: this.state.position.left + "%",
-      top: this.state.position.top + "%"
-    };
+    var style = (this.props.orientation == "x")?
+      ({left: this.state.position.left + "%", top: -(this.state.dimension.height-this.state.borderWidth)/2 + "px"}):
+      ({top: this.state.position.top + "%", left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"});
 
     return (
       <span
         className="lsd-slider-handle lsd-sun-handle"
         onMouseDown={this.dragStart}
-        style={style}/>
+        style={style}
+        ref={(ref) => this.componentInstance = ref}/>
     );
   }
 });
