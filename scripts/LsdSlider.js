@@ -28,13 +28,15 @@ var LsdSliderHandle = React.createClass({
   *  TODO: Fix warning -> "getInitialState was defined on LsdSlider, a plain
   *  JavaScript class. This is only supported for classes created using
   *  React.createClass. Did you mean to define a state property instead?"
+  *
+  *  TODO: Fix handle offset to slider bar
   */
   getInitialState: function() {
     return {
       dragging: false,
       position: {
-        top: 0,
-        left: 0
+        top: -9.5/200*100,
+        left: -9.5/300*100
       }
     };
   },
@@ -77,7 +79,7 @@ var LsdSliderHandle = React.createClass({
         /*
         *  Normalization of mouse coordinates relative to the slider.
         */
-      	var newLeft = ((mouseXY.x-this.props.containerPosition.left)/this.props.containerWidth)*100;
+      	var newLeft = ((mouseXY.x-this.props.containerPosition.left-12)/this.props.containerWidth)*100;
         /*
         *  Forces a threshold to the left value to prevent handle from going
         *  outside the slider.
@@ -94,7 +96,7 @@ var LsdSliderHandle = React.createClass({
         /*
         *  Normalization of mouse coordinates relative to the slider.
         */
-        var newTop = ((mouseXY.y-this.props.containerPosition.top)/this.props.containerHeight)*100;
+        var newTop = ((mouseXY.y-this.props.containerPosition.top-12)/this.props.containerHeight)*100;
         /*
         *  Forces a threshold to the top value to prevent handle from going
         *  outside the slider.
