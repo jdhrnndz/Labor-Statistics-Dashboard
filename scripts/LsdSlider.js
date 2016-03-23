@@ -5,7 +5,30 @@
 *    additional such as multiple values and automatic orientation detection.
 */
 
+/*
+*  LsdSliderThumb React Component
+*  States:
+*    dragging:  [boolean] Needed to be checked if the thumb needs to be moved
+*               because the mouse listener is declared globally.
+*    position:  [JSON object] {
+*      top: [float] Changed when a vertical slider thumb is being dragged.
+*      left: [float] Changed when a horizontal slider thumb is being dragged.
+*    }
+*  Props:
+*    containerWidth: [float] Used in normalization of mouse coords - horizontal
+*    containerHeight: [float] Used in normalization of mouse coords - vertical
+*    containerPosition: [JSON object] Used in normalization of mouse coords {
+*      top: [float]
+*      left: [float]
+*    }
+*    orientation: [string] "x" | "y" Classified by LSD Slider React Component
+*/
 var LsdSliderThumb = React.createClass({
+  /*
+  *  TODO: Fix warning -> "getInitialState was defined on LsdSlider, a plain
+  *  JavaScript class. This is only supported for classes created using
+  *  React.createClass. Did you mean to define a state property instead?"
+  */
   getInitialState: function() {
     return {
       dragging: false,
@@ -16,6 +39,16 @@ var LsdSliderThumb = React.createClass({
     };
   },
   componentWillMount: function() {
+    /*
+    *  Binding dragStart to mousedown should also be here but:
+    *  onMouseDown > refs (by simplicity).
+    *  Take note that I add the event listener to the document element because:
+    *  1. The mousemove relies on the mouse's coordinates relative to the
+    *     document, not the handle. Otherwise, the handle will move only if the
+    *     mouse is moved inside the handle.
+    *  2. If the mouse is released outside the handle, the drag will stop since
+    *     the document, and not the handle, listens to that event.
+    */
     document.addEventListener("mousemove", this.dragEvent);
     document.addEventListener("mouseup", this.dragStop);
   },
@@ -32,46 +65,76 @@ var LsdSliderThumb = React.createClass({
   dragEvent: function(e) {
     if (this.state.dragging) {
       /*
-        The next two lines prevent the cursor to select text and items while dragging the slider handle
+      *  Prevents the cursor to select elements while dragging the handle
       */
       if(e.stopPropagation) e.stopPropagation();
       if(e.preventDefault) e.preventDefault();
 
+      /*
+      *  TODO: Functionalize normalization and threshold
+      */
       if(this.props.orientation == "x") {
-      	var newLeftValue = ((mouseXY.x-this.props.containerPosition.left)/this.props.containerWidth)*100;
-        newLeftValue = (newLeftValue<0)?0:((newLeftValue>100)?100:newLeftValue);
+        /*
+        *  Normalization of mouse coordinates relative to the slider.
+        */
+      	var newLeft = ((mouseXY.x-this.props.containerPosition.left)/this.props.containerWidth)*100;
+        /*
+        *  Forces a threshold to the left value to prevent handle from going
+        *  outside the slider.
+        */
+        newLeft = (newLeft<0)?0:((newLeft>100)?100:newLeft);
 
         this.setState({
           position: {
-            left: newLeftValue
+            left: newLeft
           }
         });
       }
       else {
-        var newTopValue = ((mouseXY.y-this.props.containerPosition.top)/this.props.containerHeight)*100;
-        newTopValue = (newTopValue<0)?0:((newTopValue>100)?100:newTopValue);
+        /*
+        *  Normalization of mouse coordinates relative to the slider.
+        */
+        var newTop = ((mouseXY.y-this.props.containerPosition.top)/this.props.containerHeight)*100;
+        /*
+        *  Forces a threshold to the top value to prevent handle from going
+        *  outside the slider.
+        */
+        newTop = (newTop<0)?0:((newTop>100)?100:newTop);
 
         this.setState({
           position: {
-            top: newTopValue
+            top: newTop
           }
         });
       }
     }
   },
   render: function() {
-    var styleValue = (this.props.orientation == "x")?
-      ({left: this.state.position.left + "%"}):
-      ({top: this.state.position.top + "%"});
+    /*
+    *  This is PROBABLY better than bothering to check the orientation and 
+    *  setting the style to left xor top only.
+    */
+    var style = {
+      left: this.state.position.left + "%",
+      top: this.state.position.top + "%"
+    };
 
     return (
       <span
         className="lsd-slider-thumb lsd-sun-thumb"
         onMouseDown={this.dragStart}
-        style={styleValue}/>
+        style={style}/>
     );
   }
 });
+
+/*
+*  LsdSliderRange React Component
+*  States:
+*
+*  Props:
+*
+*/
 
 var LsdSliderRange = React.createClass({
   render: function() {
@@ -82,6 +145,21 @@ var LsdSliderRange = React.createClass({
   }
 });
 
+/*
+*  LsdSlider React Component
+*  States:
+*    position: [JSON object] {
+*      top: [float]
+*      left: [float]
+*    orientation: [string] 
+*    }
+*  Props:
+*    width: [float] Used in normalization of mouse coords - horizontal
+*    weight: [float] Used in normalization of mouse coords - vertical
+*    min: [float]
+*    max: [float]
+*    multiple: [integer]
+*/
 var LsdSlider = React.createClass({
   getInitialState: function() {
     return {
@@ -93,13 +171,23 @@ var LsdSlider = React.createClass({
     };
   },
   componentWillMount: function() {
-  	var orientationValue = (this.props.width > this.props.height)?"x":"y";
+    /*
+    *  Automatic orientation identification lmao.
+    *  This state is passed to LsdSliderHandle.
+    */
+  	var orientation = (this.props.width>this.props.height)?"x":"y";
+
   	this.setState({
-      orientation: orientationValue
+      orientation: orientation
     });
   },
   componentDidMount: function() {
+    /*
+    *  Identify the position of this component after it has been rendered on
+    *  the DOM. This state is passed to LsdSliderHandle.
+    */
     var componentPosition = cumulativeOffset(this.componentInstance);
+
     this.setState({
       position: {
       	top: componentPosition.top,
@@ -108,15 +196,18 @@ var LsdSlider = React.createClass({
     });
   },
   render: function() {
-    var styleValue = (this.state.orientation == "x")?
+    /*
+    *  Sets orientation based on dimension. By default, a slider is 5px thick.
+    */
+    var style = (this.state.orientation == "x")?
       ({width: this.props.width + "px", height: "5px"}):
       ({height: this.props.height + "px", width: "5px"});
 
     return (
       <div
         className="lsd-slider"
-        style={styleValue}
-        ref={(ref) => this.componentInstance = ref}>
+        style={style}
+        ref={(ref) => this.componentInstance = ref}> {/*Refs! I must be a pro.*/}
         <LsdSliderRange />
         <LsdSliderThumb
           containerHeight={this.props.height}
