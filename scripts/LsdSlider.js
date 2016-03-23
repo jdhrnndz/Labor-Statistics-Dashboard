@@ -6,13 +6,13 @@
 */
 
 /*
-*  LsdSliderThumb React Component
+*  LsdSliderHandle React Component
 *  States:
-*    dragging:  [boolean] Needed to be checked if the thumb needs to be moved
+*    dragging:  [boolean] Needed to be checked if the handle needs to be moved
 *               because the mouse listener is declared globally.
 *    position:  [JSON object] {
-*      top: [float] Changed when a vertical slider thumb is being dragged.
-*      left: [float] Changed when a horizontal slider thumb is being dragged.
+*      top: [float] Changed when a vertical slider handle is being dragged.
+*      left: [float] Changed when a horizontal slider handle is being dragged.
 *    }
 *  Props:
 *    containerWidth: [float] Used in normalization of mouse coords - horizontal
@@ -21,9 +21,9 @@
 *      top: [float]
 *      left: [float]
 *    }
-*    orientation: [string] "x" | "y" Classified by LSD Slider React Component
+*    orientation: [string] "x" | "y" Classified by LsdSlider React Component
 */
-var LsdSliderThumb = React.createClass({
+var LsdSliderHandle = React.createClass({
   /*
   *  TODO: Fix warning -> "getInitialState was defined on LsdSlider, a plain
   *  JavaScript class. This is only supported for classes created using
@@ -121,7 +121,7 @@ var LsdSliderThumb = React.createClass({
 
     return (
       <span
-        className="lsd-slider-thumb lsd-sun-thumb"
+        className="lsd-slider-handle lsd-sun-handle"
         onMouseDown={this.dragStart}
         style={style}/>
     );
@@ -209,7 +209,7 @@ var LsdSlider = React.createClass({
         style={style}
         ref={(ref) => this.componentInstance = ref}> {/*Refs! I must be a pro.*/}
         <LsdSliderRange />
-        <LsdSliderThumb
+        <LsdSliderHandle
           containerHeight={this.props.height}
           containerWidth={this.props.width}
           containerPosition={this.state.position}
