@@ -11,18 +11,6 @@
         <link rel="stylesheet" href="styles/lsd.css"/>
         <script>
           DomReady.ready(function(){
-            mouseXY = {
-              x: 0,
-              y: 0
-            };
-
-            document.onmousemove = function(e) {
-              e = e || window.event;
-
-              mouseXY.x = e.pageX;
-              mouseXY.y = e.pageY;
-            }
-
             cumulativeOffset = function(element) {
               var top = 0, left = 0;
               do {
@@ -91,7 +79,6 @@
             <h1>Add Time-in/Time-out Data</h1>
             <p>Add new column in area range chart with slider input and a confirm button</p>
         </div>
-
 
         <script type="text/babel" src="scripts/LsdSlider.js"></script>
     </body>

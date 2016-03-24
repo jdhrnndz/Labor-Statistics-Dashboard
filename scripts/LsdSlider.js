@@ -28,8 +28,6 @@ var LsdSliderHandle = React.createClass({
   *  TODO: Fix warning -> "getInitialState was defined on LsdSlider, a plain
   *  JavaScript class. This is only supported for classes created using
   *  React.createClass. Did you mean to define a state property instead?".
-  *
-  *  TODO: Fix handle offset to slider bar
   *  
   *  TODO: Fix bug, resizing window breaks offset of handle in vertical slider.
   *  The horizontal slider seems to be clear of this bug.
@@ -85,13 +83,16 @@ var LsdSliderHandle = React.createClass({
       dragging: false
     });
   },
-  dragEvent: function(e) {
+  normalize: function() {
+
+  },
+  dragEvent: function(event) {
     if (this.state.dragging) {
       /*
       *  Prevents the cursor to select elements while dragging the handle
       */
-      if(e.stopPropagation) e.stopPropagation();
-      if(e.preventDefault) e.preventDefault();
+      if(event.stopPropagation) event.stopPropagation();
+      if(event.preventDefault) event.preventDefault();
 
       /*
       *  TODO: Functionalize normalization and threshold
@@ -100,7 +101,7 @@ var LsdSliderHandle = React.createClass({
         /*
         *  Normalization of mouse coordinates relative to the slider.
         */
-      	var newLeft = ((mouseXY.x-this.props.containerPosition.left-this.state.dimension.width/2)/this.props.containerWidth)*100;
+      	var newLeft = ((event.pageX-this.props.containerPosition.left-this.state.dimension.width/2)/this.props.containerWidth)*100;
         /*
         *  Forces a threshold to the left value to prevent handle from going
         *  outside the slider.
@@ -118,7 +119,7 @@ var LsdSliderHandle = React.createClass({
         /*
         *  Normalization of mouse coordinates relative to the slider.
         */
-        var newTop = ((mouseXY.y-this.props.containerPosition.top-this.state.dimension.height/2)/this.props.containerHeight)*100;
+        var newTop = ((event.pageY-this.props.containerPosition.top-this.state.dimension.height/2)/this.props.containerHeight)*100;
         /*
         *  Forces a threshold to the top value to prevent handle from going
         *  outside the slider.
