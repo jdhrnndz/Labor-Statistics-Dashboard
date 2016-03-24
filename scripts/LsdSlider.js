@@ -61,14 +61,18 @@ var LsdSliderHandle = React.createClass({
     document.addEventListener("mouseup", this.dragStop);
   },
   componentDidMount: function() {
+    var newDimension = {
+      width: this.componentInstance.offsetWidth,
+      height: this.componentInstance.offsetHeight
+    };
+
+    var handleOffset = this.props.computeHandleOffset(newDimension);
+
     this.setState({
-      dimension: {
-        width: this.componentInstance.offsetWidth,
-        height: this.componentInstance.offsetHeight
-      },
+      dimension: newDimension,
       position: {
-        top: this.componentInstance.offsetHeight/(2*this.props.containerHeight)*-100,
-        left: this.componentInstance.offsetWidth/(2*this.props.containerWidth)*-100
+        top: handleOffset*-1,
+        left: handleOffset*-1
       },
       borderWidth: parseInt(getComputedStyle(this.componentInstance).getPropertyValue("border-width"))
     });
@@ -83,9 +87,6 @@ var LsdSliderHandle = React.createClass({
       dragging: false
     });
   },
-  normalize: function() {
-
-  },
   dragEvent: function(event) {
     if (this.state.dragging) {
       /*
@@ -94,42 +95,23 @@ var LsdSliderHandle = React.createClass({
       if(event.stopPropagation) event.stopPropagation();
       if(event.preventDefault) event.preventDefault();
 
-      /*
-      *  TODO: Functionalize normalization and threshold
-      */
-      if(this.props.orientation == "x") {
-        /*
-        *  Normalization of mouse coordinates relative to the slider.
-        */
-      	var newLeft = ((event.pageX-this.props.containerPosition.left-this.state.dimension.width/2)/this.props.containerWidth)*100;
-        /*
-        *  Forces a threshold to the left value to prevent handle from going
-        *  outside the slider.
-        */
-        var thresholdOffset = (this.state.dimension.width/2)/this.props.containerWidth*100;
-        newLeft = (newLeft<0-thresholdOffset)?0-thresholdOffset:((newLeft>100-thresholdOffset)?100-thresholdOffset:newLeft);
+      var newValue = this.props.computeHandlePosition(
+        {
+          x: event.pageX,
+          y: event.pageY
+        }, this.state.dimension);
 
+      if(this.props.orientation == "x") {
         this.setState({
           position: {
-            left: newLeft
+            left: newValue
           }
         });
       }
       else {
-        /*
-        *  Normalization of mouse coordinates relative to the slider.
-        */
-        var newTop = ((event.pageY-this.props.containerPosition.top-this.state.dimension.height/2)/this.props.containerHeight)*100;
-        /*
-        *  Forces a threshold to the top value to prevent handle from going
-        *  outside the slider.
-        */
-        var thresholdOffset = (this.state.dimension.height/2)/this.props.containerHeight*100;
-        newTop = (newTop<0-thresholdOffset)?0-thresholdOffset:((newTop>100-thresholdOffset)?100-thresholdOffset:newTop);
-
         this.setState({
           position: {
-            top: newTop
+            top: newValue
           }
         });
       }
@@ -221,6 +203,45 @@ var LsdSlider = React.createClass({
       }
     });
   },
+  /*
+  *  Normalization of mouse coordinates relative to the slider.
+  */
+  normalizeMouse: function(mouseCoords, handleDimension) {
+    if(this.state.orientation == "x")
+      return ((mouseCoords.x-this.state.position.left-handleDimension.width/2)/this.props.width)*100;
+    else
+      return ((mouseCoords.y-this.state.position.top-handleDimension.height/2)/this.props.height)*100;
+  },
+  /*
+  *  Forces a threshold to the drag value to prevent handle from going
+  *  outside the slider.
+  */
+  computeHandleOffset: function(handleDimension) {
+    if(this.state.orientation == "x")
+      return (handleDimension.width/2)/this.props.width*100;
+    else
+      return (handleDimension.height/2)/this.props.height*100;
+  },
+  applyThreshold: function(value, thresholdOffset) {
+    var min = 0-thresholdOffset,
+    max = 100-thresholdOffset;
+
+    return (value<min)?min:((value>max)?max:value);
+  },
+  computeHandlePosition: function(mouseCoords, handleDimension) {
+    var newValue = this.normalizeMouse(
+      {
+        x: event.pageX,
+        y: event.pageY
+      },
+      handleDimension
+    );
+    
+    var thresholdOffset = this.computeHandleOffset(handleDimension);
+    newValue = this.applyThreshold(newValue, thresholdOffset);
+
+    return newValue;
+  },
   render: function() {
     /*
     *  Sets orientation based on dimension. By default, a slider is 5px thick.
@@ -236,9 +257,8 @@ var LsdSlider = React.createClass({
         ref={(ref) => this.componentInstance = ref}> {/*Refs! I must be a pro.*/}
         <LsdSliderRange />
         <LsdSliderHandle
-          containerHeight={this.props.height}
-          containerWidth={this.props.width}
-          containerPosition={this.state.position}
+          computeHandlePosition={this.computeHandlePosition}
+          computeHandleOffset={this.computeHandleOffset}
           orientation={this.state.orientation}/>
       </div>
     );
