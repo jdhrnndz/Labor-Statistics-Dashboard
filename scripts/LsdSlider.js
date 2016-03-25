@@ -250,23 +250,32 @@ var LsdSlider = React.createClass({
       ({width: this.props.width + "px", height: "5px"}):
       ({height: this.props.height + "px", width: "5px"});
 
+    var handleCount = this.props.multiple || 1;
+    var handles = [];
+    for(var i=0; i<handleCount; i++){
+      handles.push(
+        <LsdSliderHandle
+          key={i}
+          computeHandlePosition={this.computeHandlePosition}
+          computeHandleOffset={this.computeHandleOffset}
+          orientation={this.state.orientation}/>
+      );
+    }
+
     return (
       <div
         className="lsd-slider"
         style={style}
         ref={(ref) => this.componentInstance = ref}> {/*Refs! I must be a pro.*/}
         <LsdSliderRange />
-        <LsdSliderHandle
-          computeHandlePosition={this.computeHandlePosition}
-          computeHandleOffset={this.computeHandleOffset}
-          orientation={this.state.orientation}/>
+        {handles}
       </div>
     );
   }
 });
 
 ReactDOM.render(
-  <LsdSlider key="1" height="200" width="300"/>,
+  <LsdSlider key="1" height="200" width="300" multiple="2"/>,
   document.getElementById('lsd-slider-1')
 );
 
