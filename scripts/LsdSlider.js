@@ -31,6 +31,8 @@ var LsdSliderHandle = React.createClass({
   *  
   *  TODO: Fix bug, resizing window breaks offset of handle in vertical slider.
   *  The horizontal slider seems to be clear of this bug.
+  * 
+  *  TODO: Consume initial value property from LsdSlider component
   */
   getInitialState: function() {
     return {
@@ -167,6 +169,9 @@ var LsdSliderRange = React.createClass({
 *    min: [float]
 *    max: [float]
 *    multiple: [integer]
+*
+*  TODO: Add computation for initial value of each handle
+*
 */
 var LsdSlider = React.createClass({
   getInitialState: function() {
