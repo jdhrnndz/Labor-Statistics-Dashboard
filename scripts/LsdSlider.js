@@ -70,12 +70,10 @@ var LsdSliderHandle = React.createClass({
 
     var handleOffset = this.props.computeHandleOffset(newDimension);
 
+    var newPosition = (this.props.orientation == "x")?{top:handleOffset*-1, left:this.props.initialValue-handleOffset}:{top:this.props.initialValue-handleOffset ,left:handleOffset*-1}
     this.setState({
       dimension: newDimension,
-      position: {
-        top: handleOffset*-1,
-        left: handleOffset*-1
-      },
+      position: newPosition,
       borderWidth: parseInt(getComputedStyle(this.componentInstance).getPropertyValue("border-width"))
     });
   },
@@ -257,13 +255,16 @@ var LsdSlider = React.createClass({
 
     var handleCount = this.props.multiple || 1;
     var handles = [];
+    var percentInterval = 100/(handleCount-1);
+    
     for(var i=0; i<handleCount; i++){
       handles.push(
         <LsdSliderHandle
           key={i}
           computeHandlePosition={this.computeHandlePosition}
           computeHandleOffset={this.computeHandleOffset}
-          orientation={this.state.orientation}/>
+          orientation={this.state.orientation}
+          initialValue={percentInterval*i}/>
       );
     }
 
@@ -280,7 +281,7 @@ var LsdSlider = React.createClass({
 });
 
 ReactDOM.render(
-  <LsdSlider key="1" height="200" width="300" multiple="2"/>,
+  <LsdSlider key="1" height="200" width="300" multiple="5" min="1" max="8"/>,
   document.getElementById('lsd-slider-1')
 );
 
