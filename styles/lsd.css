@@ -1,3 +1,7 @@
+body {
+  background-color: #37474F;
+}
+
 .lsd-slider {
   position: relative;
   border-radius: 5px;
@@ -25,4 +29,34 @@
 .lsd-sun-handle {
   background-color: #F5EB42;
   border: 4px solid #E4C74D;
+}
+
+.sun {
+  position: relative;
+}
+
+.sun .ray {
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  z-index: 1;
+  background-color: #FED35D;
+}
+
+.sun #ray2 {
+  transform: rotate(120deg);
+}
+
+.sun #ray3 {
+  transform: rotate(240deg);
+}
+
+#suncore {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #EAB622;
+  box-shadow: inset -2px -1px 0 0 #e89d1c;
+  border-radius: 50%;
+  z-index: 10;
 }

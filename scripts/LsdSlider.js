@@ -127,11 +127,16 @@ var LsdSliderHandle = React.createClass({
       ({top: this.state.position.top + "%", left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"});
 
     return (
-      <span
-        className="lsd-slider-handle lsd-sun-handle"
+      <div
+        className="sun lsd-slider-handle"
         onMouseDown={this.dragStart}
         style={style}
-        ref={(ref) => this.componentInstance = ref}/>
+        ref={(ref) => this.componentInstance = ref}>
+        <div className="ray" id="ray1"></div>
+        <div className="ray" id="ray2"></div>
+        <div className="ray" id="ray3"></div>
+        <div id="suncore"/>
+      </div>
     );
   }
 });
