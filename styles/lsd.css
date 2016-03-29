@@ -1,13 +1,13 @@
 body {
-  background-color: #37474F;
-  color: white;
+  background-color: #485451;
+  color: #adb6b9;
 }
 
 .lsd-slider {
   position: relative;
   border-radius: 5px;
-  border: solid 1px #3F525A;
-  background-color: #212B30;
+  border: solid 1px #52605D;
+  background-color: #3F4A48;
   z-index: 1;
   margin: 5px;
 }
