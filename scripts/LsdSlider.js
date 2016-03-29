@@ -139,30 +139,32 @@ var LsdSliderHandle = React.createClass({
     }
   },
   render: function() {
-  	/*
+    /*
   	*  The long computation is for centering the handle with respect to the
   	*  slider's orientation.
   	*/
     var style = (this.props.orientation == "x")?
       ({
-      	left: this.state.position.left + "%",
-      	top: -(this.state.dimension.height-this.state.borderWidth)/2 + "px"
+        left: this.state.position.left + "%",
+        top: -(this.state.dimension.height-this.state.borderWidth)/2 + "px"
       }):
       ({
-      	top: this.state.position.top + "%",
-      	left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"
+        top: this.state.position.top + "%",
+        left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"
       });
 
     return (
       <div
-        className="sun lsd-slider-handle"
+        className="lsd-slider-handle"
         onMouseDown={this.dragStart}
         style={style}
         ref={(ref) => this.componentInstance = ref}>
-        <div className="ray" id="ray1"></div>
-        <div className="ray" id="ray2"></div>
-        <div className="ray" id="ray3"></div>
-        <div id="suncore"/>
+        <div className="sun">
+            <div className="ray" id="ray1"></div>
+            <div className="ray" id="ray2"></div>
+            <div className="ray" id="ray3"></div>
+            <div id="suncore"/>
+        </div>
       </div>
     );
   }
@@ -218,9 +220,9 @@ var LsdSlider = React.createClass({
     *  Automatic orientation identification lmao.
     *  This state is passed to LsdSliderHandle.
     */
-  	var orientation = (this.props.width>this.props.height)?"x":"y";
+    var orientation = (this.props.width>this.props.height)?"x":"y";
 
-  	this.setState({
+    this.setState({
       orientation: orientation
     });
   },
