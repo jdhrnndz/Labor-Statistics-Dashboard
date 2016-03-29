@@ -54,9 +54,9 @@ var LsdSliderHandle = React.createClass({
       },
       borderWidth: 0
     };
-  },
-  componentWillMount: function() {
-    /*
+  },  
+  componentDidMount: function() {
+  	/*
     *  Binding dragStart to mousedown should also be here but:
     *  onMouseDown > refs (by simplicity).
     *  Take note that I add the event listener to the document element because:
@@ -68,8 +68,7 @@ var LsdSliderHandle = React.createClass({
     */
     document.addEventListener("mousemove", this.dragEvent);
     document.addEventListener("mouseup", this.dragStop);
-  },
-  componentDidMount: function() {
+
     /*
   	*  Get the real value of the handle element. It factors in the width of the
   	*  border and padding.
@@ -97,6 +96,10 @@ var LsdSliderHandle = React.createClass({
       position: newPosition,
       borderWidth: parseInt(getComputedStyle(this.componentInstance).getPropertyValue("border-width"))
     });
+  },
+  componentWillUnmount: function(){
+  	document.removeEventListener("mousemove", this.dragEvent);
+    document.removeEventListener("mouseup", this.dragStop);
   },
   dragStart: function() {
     this.setState ({
