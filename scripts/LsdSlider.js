@@ -2,7 +2,8 @@
 *  Name: Labor Statistics Dashboard Custom Slider
 *  Author: John Denielle Hernandez
 *  Desc: Custom slider component similar to input of type range with some
-*    additional such as multiple values and automatic orientation detection.
+*    additional features such as multiple values and automatic orientation 
+*    detection.
 */
 
 /*
@@ -14,14 +15,17 @@
 *      top: [float] Changed when a vertical slider handle is being dragged.
 *      left: [float] Changed when a horizontal slider handle is being dragged.
 *    }
-*  Props:
-*    containerWidth: [float] Used in normalization of mouse coords - horizontal
-*    containerHeight: [float] Used in normalization of mouse coords - vertical
-*    containerPosition: [JSON object] Used in normalization of mouse coords {
-*      top: [float]
-*      left: [float]
+*    dimension:  [JSON object] Offset dimension of the handle. {
+*	   width: [float] Obtained from offsetWidth HTML element property.
+*      height: [float] Obtained from offsetHeight HTML element property.
 *    }
-*    orientation: [string] "x" | "y" Classified by LsdSlider React Component
+*    borderWidth: [float] Used for offset 
+*  Props:
+*    computeHandlePosition= [function] Used to get new position when dragging.
+*    computeHandleOffset= [function] Uses the offset height/width of handle.
+*    orientation: [string] "x" | "y" Determined by LsdSlider React Component.
+*    initialValue: [float] Used to show multiple handles evenly distributed 
+*                  across the slider initially.
 */
 var LsdSliderHandle = React.createClass({
   /*
@@ -31,8 +35,11 @@ var LsdSliderHandle = React.createClass({
   *  
   *  TODO: Fix bug, resizing window breaks offset of handle in vertical slider.
   *  The horizontal slider seems to be clear of this bug.
-  * 
-  *  TODO: Consume initial value property from LsdSlider component
+  *
+  *  TODO: Check if clientHeight/Width or scrollHeight/Width can replace the
+  *        handle offset computation using the borderWidth state.
+  *
+  *  TODO: Refactor all code that relies on orientation. Eliminate redundancy.
   */
   getInitialState: function() {
     return {
@@ -63,6 +70,10 @@ var LsdSliderHandle = React.createClass({
     document.addEventListener("mouseup", this.dragStop);
   },
   componentDidMount: function() {
+    /*
+  	*  Get the real value of the handle element. It factors in the width of the
+  	*  border and padding.
+  	*/
     var newDimension = {
       width: this.componentInstance.offsetWidth,
       height: this.componentInstance.offsetHeight
@@ -70,7 +81,17 @@ var LsdSliderHandle = React.createClass({
 
     var handleOffset = this.props.computeHandleOffset(newDimension);
 
-    var newPosition = (this.props.orientation == "x")?{top:handleOffset*-1, left:this.props.initialValue-handleOffset}:{top:this.props.initialValue-handleOffset ,left:handleOffset*-1}
+    var newPosition =
+      (this.props.orientation == "x")?
+        {
+          top: handleOffset*-1,
+          left: this.props.initialValue-handleOffset
+        }:
+        {
+          top: this.props.initialValue-handleOffset,
+          left:handleOffset*-1
+        };
+
     this.setState({
       dimension: newDimension,
       position: newPosition,
@@ -118,13 +139,19 @@ var LsdSliderHandle = React.createClass({
     }
   },
   render: function() {
-    /*
-    *  This is PROBABLY better than bothering to check the orientation and 
-    *  setting the style to left xor top only.
-    */
+  	/*
+  	*  The long computation is for centering the handle with respect to the
+  	*  slider's orientation.
+  	*/
     var style = (this.props.orientation == "x")?
-      ({left: this.state.position.left + "%", top: -(this.state.dimension.height-this.state.borderWidth)/2 + "px"}):
-      ({top: this.state.position.top + "%", left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"});
+      ({
+      	left: this.state.position.left + "%",
+      	top: -(this.state.dimension.height-this.state.borderWidth)/2 + "px"
+      }):
+      ({
+      	top: this.state.position.top + "%",
+      	left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"
+      });
 
     return (
       <div
@@ -146,7 +173,8 @@ var LsdSliderHandle = React.createClass({
 *  States:
 *
 *  Props:
-*
+*  
+*  NOTE: LsdSliderRange must only be shown when there are more than 1 handle.
 */
 
 var LsdSliderRange = React.createClass({
@@ -167,14 +195,13 @@ var LsdSliderRange = React.createClass({
 *    orientation: [string] 
 *    }
 *  Props:
-*    width: [float] Used in normalization of mouse coords - horizontal
-*    weight: [float] Used in normalization of mouse coords - vertical
+*    width: [float] Used in normalization of mouse coords - horizontal.
+*    weight: [float] Used in normalization of mouse coords - vertical.
 *    min: [float]
 *    max: [float]
-*    multiple: [integer]
+*    multiple: [integer] Determines the number of handles in the slider.
 *
-*  TODO: Add computation for initial value of each handle
-*
+*  TODO: Fix handle offset computation when slider width is not 5px.
 */
 var LsdSlider = React.createClass({
   getInitialState: function() {
@@ -252,7 +279,7 @@ var LsdSlider = React.createClass({
   },
   render: function() {
     /*
-    *  Sets orientation based on dimension. By default, a slider is 5px thick.
+    *  Sets orientation based on dimension. By default, a slider's rail is 5px thick.
     */
     var style = (this.state.orientation == "x")?
       ({width: this.props.width + "px", height: "5px"}):
@@ -277,7 +304,7 @@ var LsdSlider = React.createClass({
       <div
         className="lsd-slider"
         style={style}
-        ref={(ref) => this.componentInstance = ref}> {/*Refs! I must be a pro.*/}
+        ref={(ref) => this.componentInstance = ref}> {/*Refs! Must be a pro.*/}
         <LsdSliderRange />
         {handles}
       </div>
