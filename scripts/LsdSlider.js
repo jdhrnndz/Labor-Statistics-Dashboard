@@ -286,11 +286,11 @@ var LsdSlider = React.createClass({
 });
 
 ReactDOM.render(
-  <LsdSlider key="1" height="200" width="300" multiple="5" min="1" max="8"/>,
+  <LsdSlider key="1" height="200" width="300" multiple="2" min="1" max="8"/>,
   document.getElementById('lsd-slider-1')
 );
 
 ReactDOM.render(
-  <LsdSlider key="2" height="200" width="0"/>,
+  <LsdSlider key="2" height="240" width="0"/>,
   document.getElementById('lsd-slider-2')
 );
