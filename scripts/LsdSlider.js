@@ -147,6 +147,8 @@ var LsdSliderHandle = React.createClass({
           }
         });
       }
+
+      this.props.updateHandleValue(this.props.id, handlePos.realValue);
     }
   },
   render: function() {
@@ -229,7 +231,8 @@ var LsdSlider = React.createClass({
       	width: 0,
       	height: 0
       },
-      orientation: ""
+      orientation: "",
+      values: []
     };
   },
   componentWillMount: function() {
@@ -239,6 +242,17 @@ var LsdSlider = React.createClass({
 
   	var correctWidth = parseInt(this.props.width) || 5;
   	var correctHeight = parseInt(this.props.height) || 5;
+
+    /*
+    *  Computation for distributing multiple handles evenly along the slider.
+    */
+  	var handleCount = this.props.multiple || 1;
+  	var percentInterval = (handleCount > 1)?100/(handleCount-1):0;
+  	var values = [];
+
+  	for(var i=0; i<handleCount; i++){
+  		values.push(percentInterval*i);
+  	}
 
     /*
     *  Automatic orientation identification lmao.
@@ -251,7 +265,9 @@ var LsdSlider = React.createClass({
       	width: correctWidth,
       	height: correctHeight
       },
-      orientation: orientation
+      orientation: orientation,
+      handleCount: handleCount,
+      values: values
     });
   },
   componentDidMount: function() {
@@ -306,6 +322,15 @@ var LsdSlider = React.createClass({
 
     return {realValue, offsetValue};
   },
+  updateHandleValue: function(handleId, value) {
+  	var values = this.state.values;
+
+  	values[handleId] = value;
+
+  	this.setState({
+  	  values: values
+  	});
+  },
   render: function() {
     /*
     *  Sets orientation based on dimension.
@@ -317,18 +342,20 @@ var LsdSlider = React.createClass({
       ({width: this.props.width + "px", height: this.state.dimension.height + "px"}):
       ({height: this.props.height + "px", width: this.state.dimension.width + "px"});
 
-    var handleCount = this.props.multiple || 1;
     var handles = [];
-    var percentInterval = 100/(handleCount-1);
+
+    console.log(this.state.values);
     
-    for(var i=0; i<handleCount; i++){
+    for(var i=0; i<this.state.handleCount; i++){
       handles.push(
         <LsdSliderHandle
           key={i}
+          id={i}
           computeHandlePosition={this.computeHandlePosition}
           computeHandleOffset={this.computeHandleOffset}
           orientation={this.state.orientation}
-          initialValue={percentInterval*i}/>
+          initialValue={this.state.values[i]}
+          updateHandleValue={this.updateHandleValue}/>
       );
     }
 
