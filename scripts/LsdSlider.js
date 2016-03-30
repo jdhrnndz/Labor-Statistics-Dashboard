@@ -92,10 +92,10 @@ var LsdSliderHandle = React.createClass({
       (this.props.orientation == "x")?
         {
           top: -handleOffset,
-          left: this.props.initialValue-handleOffset
+          left: this.props.enforcedValue-handleOffset
         }:
         {
-          top: this.props.initialValue-handleOffset,
+          top: this.props.enforcedValue-handleOffset,
           left: -handleOffset
         };
 
@@ -128,27 +128,28 @@ var LsdSliderHandle = React.createClass({
       if(event.preventDefault) event.preventDefault();
 
       var handlePos = this.props.computeHandlePosition(
+      	this.props.id,
         {
           x: event.pageX,
           y: event.pageY
-        }, this.state.dimension);
+        },
+        this.state.dimension
+      );
 
-      if(this.props.orientation == "x") {
-        this.setState({
-          position: {
-            left: handlePos.offsetValue
-          }
-        });
-      }
-      else {
-        this.setState({
-          position: {
-            top: handlePos.offsetValue
-          }
-        });
-      }
-
-      this.props.updateHandleValue(this.props.id, handlePos.realValue);
+      // if(this.props.orientation == "x") {
+      //   this.setState({
+      //     position: {
+      //       left: handlePos.offsetValue
+      //     }
+      //   });
+      // }
+      // else {
+      //   this.setState({
+      //     position: {
+      //       top: handlePos.offsetValue
+      //     }
+      //   });
+      // }
     }
   },
   render: function() {
@@ -156,13 +157,15 @@ var LsdSliderHandle = React.createClass({
   	*  The long computation is for centering the handle with respect to the
   	*  slider's orientation.
   	*/
+  	var handleOffset = this.props.computeHandleOffset(this.state.dimension);
+
     var style = (this.props.orientation == "x")?
       ({
-        left: this.state.position.left + "%",
+        left: this.props.enforcedValue-handleOffset + "%",
         top: -(this.state.dimension.height-this.state.borderWidth)/2 + "px"
       }):
       ({
-        top: this.state.position.top + "%",
+        top: this.props.enforcedValue-handleOffset + "%",
         left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"
       });
 
@@ -311,25 +314,49 @@ var LsdSlider = React.createClass({
   	*/
     return (value<0)?0:((value>100)?100:value);
   },
-  computeHandlePosition: function(mouseCoords, handleDimension) {
-  	/*
+  computeHandlePosition: function(handleId, mouseCoords, handleDimension) {
+    /*
   	*  NOTE: When adding support for min/max parameters, compute it here.
   	*/
     var realValue = this.normalizeMouse(mouseCoords, handleDimension);
     realValue = this.applyThreshold(realValue);
-
     var offsetValue = realValue-this.computeHandleOffset(handleDimension);
+    this.updateHandleValue(handleId, realValue);
+
+    var values = this.state.values;
+
+    /*
+    *  Looks through the array of values and determines if a certain (or some)
+    *  of the other handles aside from the one being dragged need to be dragged
+    *  too when the allowPass property is not specified or is false.
+    *
+    *  TODO: Optimize. Must be able to handle 2000 handles or more.
+    */
+    if(this.props.allowPass != "true"){
+      for(var i=0; i<this.state.handleCount; i++){
+        if(i<handleId && this.state.values[i]>this.state.values[handleId]){
+          values[i] = realValue;
+        }
+        else if(i>handleId && this.state.values[i]<this.state.values[handleId]){
+          values[i] = realValue;
+        }
+      }
+    }
+
+    this.setState({
+      values: values
+    });
 
     return {realValue, offsetValue};
   },
   updateHandleValue: function(handleId, value) {
-  	var values = this.state.values;
+    var values = this.state.values;
 
-  	values[handleId] = value;
+    values[handleId] = value;
 
-  	this.setState({
-  	  values: values
-  	});
+    this.setState({
+      values: values
+    });
   },
   render: function() {
     /*
@@ -343,8 +370,6 @@ var LsdSlider = React.createClass({
       ({height: this.props.height + "px", width: this.state.dimension.width + "px"});
 
     var handles = [];
-
-    console.log(this.state.values);
     
     for(var i=0; i<this.state.handleCount; i++){
       handles.push(
@@ -354,8 +379,7 @@ var LsdSlider = React.createClass({
           computeHandlePosition={this.computeHandlePosition}
           computeHandleOffset={this.computeHandleOffset}
           orientation={this.state.orientation}
-          initialValue={this.state.values[i]}
-          updateHandleValue={this.updateHandleValue}/>
+          enforcedValue={this.state.values[i]}/>
       );
     }
 
@@ -372,7 +396,7 @@ var LsdSlider = React.createClass({
 });
 
 ReactDOM.render(
-  <LsdSlider key="1" width="300" multiple="2" min="1" max="8"/>,
+  <LsdSlider key="1" width="300" multiple="5" min="1" max="8"/>,
   document.getElementById('lsd-slider-1')
 );
 
