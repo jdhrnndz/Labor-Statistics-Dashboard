@@ -7,6 +7,12 @@
 */
 
 /*
+*  TODO: Configurable handles example
+*
+*  TODO: Apply prop validation
+*/
+
+/*
 *  LsdSliderHandle React Component
 *  States:
 *    dragging:  [boolean] Needed to be checked if the handle needs to be moved
@@ -40,6 +46,8 @@ var LsdSliderHandle = React.createClass({
   *        handle offset computation using the borderWidth state.
   *
   *  TODO: Refactor all code that relies on orientation. Eliminate redundancy.
+  * 
+  *  TODO: Try Using ReactLink
   */
   getInitialState: function() {
     return {
@@ -83,12 +91,12 @@ var LsdSliderHandle = React.createClass({
     var newPosition =
       (this.props.orientation == "x")?
         {
-          top: handleOffset*-1,
+          top: -handleOffset,
           left: this.props.initialValue-handleOffset
         }:
         {
           top: this.props.initialValue-handleOffset,
-          left:handleOffset*-1
+          left: -handleOffset
         };
 
     this.setState({
@@ -119,7 +127,7 @@ var LsdSliderHandle = React.createClass({
       if(event.stopPropagation) event.stopPropagation();
       if(event.preventDefault) event.preventDefault();
 
-      var newValue = this.props.computeHandlePosition(
+      var handlePos = this.props.computeHandlePosition(
         {
           x: event.pageX,
           y: event.pageY
@@ -128,14 +136,14 @@ var LsdSliderHandle = React.createClass({
       if(this.props.orientation == "x") {
         this.setState({
           position: {
-            left: newValue
+            left: handlePos.offsetValue
           }
         });
       }
       else {
         this.setState({
           position: {
-            top: newValue
+            top: handlePos.offsetValue
           }
         });
       }
@@ -201,12 +209,14 @@ var LsdSliderRange = React.createClass({
 *    }
 *  Props:
 *    width: [float] Used in normalization of mouse coords - horizontal.
-*    weight: [float] Used in normalization of mouse coords - vertical.
+*    height: [float] Used in normalization of mouse coords - vertical.
 *    min: [float]
 *    max: [float]
 *    multiple: [integer] Determines the number of handles in the slider.
 *
-*  TODO: Fix handle offset computation when slider width is not 5px.
+*  TODO: Fix handle offset computation when slider width is not 5px. uhmm. nvm
+*        Do this instead, receive alignment prop with values:
+*        left/top, middle, right/bottom. default is left/top.
 */
 var LsdSlider = React.createClass({
   getInitialState: function() {
@@ -215,17 +225,32 @@ var LsdSlider = React.createClass({
         top: 0,
         left: 0
       },
+      dimension: {
+      	width: 0,
+      	height: 0
+      },
       orientation: ""
     };
   },
   componentWillMount: function() {
+  	if(!(this.props.width || this.props.height)){
+      console.error("Warning: LsdSlider's width and height properties are both null. Please declare at least one property.");
+  	}
+
+  	var correctWidth = parseInt(this.props.width) || 5;
+  	var correctHeight = parseInt(this.props.height) || 5;
+
     /*
     *  Automatic orientation identification lmao.
     *  This state is passed to LsdSliderHandle.
     */
-    var orientation = (this.props.width>this.props.height)?"x":"y";
+    var orientation = (correctWidth>correctHeight)?"x":"y";
 
     this.setState({
+      dimension: {
+      	width: correctWidth,
+      	height: correctHeight
+      },
       orientation: orientation
     });
   },
@@ -248,9 +273,9 @@ var LsdSlider = React.createClass({
   */
   normalizeMouse: function(mouseCoords, handleDimension) {
     if(this.state.orientation == "x")
-      return ((mouseCoords.x-this.state.position.left-handleDimension.width/2)/this.props.width)*100;
+      return ((mouseCoords.x-this.state.position.left-handleDimension.width/2)/this.state.dimension.width)*100;
     else
-      return ((mouseCoords.y-this.state.position.top-handleDimension.height/2)/this.props.height)*100;
+      return ((mouseCoords.y-this.state.position.top-handleDimension.height/2)/this.state.dimension.height)*100;
   },
   /*
   *  Forces a threshold to the drag value to prevent handle from going
@@ -258,37 +283,39 @@ var LsdSlider = React.createClass({
   */
   computeHandleOffset: function(handleDimension) {
     if(this.state.orientation == "x")
-      return (handleDimension.width/2)/this.props.width*100;
+      return ((handleDimension.width/2)/this.state.dimension.width)*100;
     else
-      return (handleDimension.height/2)/this.props.height*100;
+      return ((handleDimension.height/2)/this.state.dimension.height)*100;
   },
-  applyThreshold: function(value, thresholdOffset) {
-    var min = 0-thresholdOffset,
-    max = 100-thresholdOffset;
-
-    return (value<min)?min:((value>max)?max:value);
+  applyThreshold: function(value) {
+  	/*
+  	*  Percentage only in here that's why min == 0 and max == 100.
+  	*  Actual value with respect to the min/max parameters would be computed
+  	*  somewhere else.
+  	*/
+    return (value<0)?0:((value>100)?100:value);
   },
   computeHandlePosition: function(mouseCoords, handleDimension) {
-    var newValue = this.normalizeMouse(
-      {
-        x: event.pageX,
-        y: event.pageY
-      },
-      handleDimension
-    );
-    
-    var thresholdOffset = this.computeHandleOffset(handleDimension);
-    newValue = this.applyThreshold(newValue, thresholdOffset);
+  	/*
+  	*  NOTE: When adding support for min/max parameters, compute it here.
+  	*/
+    var realValue = this.normalizeMouse(mouseCoords, handleDimension);
+    realValue = this.applyThreshold(realValue);
 
-    return newValue;
+    var offsetValue = realValue-this.computeHandleOffset(handleDimension);
+
+    return {realValue, offsetValue};
   },
   render: function() {
     /*
-    *  Sets orientation based on dimension. By default, a slider's rail is 5px thick.
+    *  Sets orientation based on dimension.
+    *  By default, a slider's rail is 5px thick.
+    *  
+    *  TODO: 
     */
     var style = (this.state.orientation == "x")?
-      ({width: this.props.width + "px", height: "5px"}):
-      ({height: this.props.height + "px", width: "5px"});
+      ({width: this.props.width + "px", height: this.state.dimension.height + "px"}):
+      ({height: this.props.height + "px", width: this.state.dimension.width + "px"});
 
     var handleCount = this.props.multiple || 1;
     var handles = [];
@@ -318,11 +345,11 @@ var LsdSlider = React.createClass({
 });
 
 ReactDOM.render(
-  <LsdSlider key="1" height="200" width="300" multiple="2" min="1" max="8"/>,
+  <LsdSlider key="1" width="300" multiple="2" min="1" max="8"/>,
   document.getElementById('lsd-slider-1')
 );
 
 ReactDOM.render(
-  <LsdSlider key="2" height="240" width="0"/>,
+  <LsdSlider key="2" height="240"/>,
   document.getElementById('lsd-slider-2')
 );
