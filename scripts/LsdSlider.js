@@ -332,12 +332,10 @@ var LsdSlider = React.createClass({
     *
     *  TODO: Optimize. Must be able to handle 2000 handles or more.
     */
+    var hndlCt = this.state.handleCount;
     if(this.props.allowPass != "true"){
-      for(var i=0; i<this.state.handleCount; i++){
-        if(i<handleId && this.state.values[i]>this.state.values[handleId]){
-          values[i] = realValue;
-        }
-        else if(i>handleId && this.state.values[i]<this.state.values[handleId]){
+      for(var i=hndlCt; i--;){
+        if(i<handleId && this.state.values[i]>this.state.values[handleId] || i>handleId && this.state.values[i]<this.state.values[handleId]){
           values[i] = realValue;
         }
       }
@@ -396,7 +394,7 @@ var LsdSlider = React.createClass({
 });
 
 ReactDOM.render(
-  <LsdSlider key="1" width="300" multiple="5" min="1" max="8"/>,
+  <LsdSlider key="1" width="300" multiple="2000" min="1" max="8"/>,
   document.getElementById('lsd-slider-1')
 );
 
