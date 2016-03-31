@@ -60,7 +60,8 @@ var LsdSliderHandle = React.createClass({
         width: 0,
         height: 0
       },
-      borderWidth: 0
+      borderWidth: 0,
+      handleOffset: 0
     };
   },  
   componentDidMount: function() {
@@ -90,7 +91,8 @@ var LsdSliderHandle = React.createClass({
 
     this.setState({
       dimension: newDimension,
-      borderWidth: parseInt(getComputedStyle(this.componentInstance).getPropertyValue("border-width"))
+      borderWidth: parseInt(getComputedStyle(this.componentInstance).getPropertyValue("border-width")),
+      handleOffset: handleOffset
     });
   },
   componentWillUnmount: function(){
@@ -130,15 +132,14 @@ var LsdSliderHandle = React.createClass({
   	*  The long computation is for centering the handle with respect to the
   	*  slider's orientation.
   	*/
-  	var handleOffset = this.props.computeHandleOffset(this.state.dimension);
 
     var style = (this.props.orientation == "x")?
       ({
-        left: this.props.enforcedValue-handleOffset + "%",
+        left: this.props.enforcedValue-this.state.handleOffset + "%",
         top: -(this.state.dimension.height-this.state.borderWidth)/2 + "px"
       }):
       ({
-        top: this.props.enforcedValue-handleOffset + "%",
+        top: this.props.enforcedValue-this.state.handleOffset + "%",
         left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"
       });
 
