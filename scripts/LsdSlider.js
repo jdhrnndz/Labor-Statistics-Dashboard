@@ -167,6 +167,8 @@ var LsdSliderHandle = React.createClass({
 *  Props:
 *  
 *  NOTE: LsdSliderRange must only be shown when there are more than 1 handle.
+*  
+*  TODO: ^do this
 */
 
 var LsdSliderRange = React.createClass({
@@ -174,11 +176,11 @@ var LsdSliderRange = React.createClass({
   	var style = (this.props.orientation == "x")?
   	  {
   	  	width: this.props.length + "%",
-  	  	height: "5px",
+  	  	height: this.props.dimension.height + "px",
   	  	left: this.props.position + "%"
   	  }:
   	  {
-  	  	width: "5px",
+  	  	width: this.props.dimension.width + "px",
   	  	height: this.props.length + "%",
   	  	top: this.props.position + "%"
   	  };
@@ -373,7 +375,8 @@ var LsdSlider = React.createClass({
       	  key={i}
       	  orientation={this.state.orientation}
       	  length={diff}
-      	  position={this.state.values[i]}/>
+      	  position={this.state.values[i]}
+      	  dimension={this.state.dimension}/>
       )
     }
 
