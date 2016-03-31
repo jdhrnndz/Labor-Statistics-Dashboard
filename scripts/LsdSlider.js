@@ -171,9 +171,20 @@ var LsdSliderHandle = React.createClass({
 
 var LsdSliderRange = React.createClass({
   render: function() {
+  	var style = (this.props.orientation == "x")?
+  	  {
+  	  	width: this.props.length + "%",
+  	  	height: "5px",
+  	  	left: this.props.position + "%"
+  	  }:
+  	  {
+  	  	width: "5px",
+  	  	height: this.props.length + "%",
+  	  	top: this.props.position + "%"
+  	  };
     return (
       <div
-        className="lsd-slider-range"/>
+        className="lsd-slider-range" style={style}/>
     );
   }
 });
@@ -342,6 +353,7 @@ var LsdSlider = React.createClass({
       ({height: this.props.height + "px", width: this.state.dimension.width + "px"});
 
     var handles = [];
+    var ranges = [];
     
     for(var i=0; i<this.state.handleCount; i++){
       handles.push(
@@ -353,6 +365,16 @@ var LsdSlider = React.createClass({
           orientation={this.state.orientation}
           enforcedValue={this.state.values[i]}/>
       );
+
+      var diff = this.state.values[i+1] - this.state.values[i];
+
+      ranges.push(
+      	<LsdSliderRange
+      	  key={i}
+      	  orientation={this.state.orientation}
+      	  length={diff}
+      	  position={this.state.values[i]}/>
+      )
     }
 
     return (
@@ -360,7 +382,7 @@ var LsdSlider = React.createClass({
         className="lsd-slider"
         style={style}
         ref={(ref) => this.componentInstance = ref}> {/*Refs! Must be a pro.*/}
-        <LsdSliderRange />
+        {ranges}
         {handles}
       </div>
     );
@@ -368,11 +390,11 @@ var LsdSlider = React.createClass({
 });
 
 ReactDOM.render(
-  <LsdSlider key="1" width="300" multiple="2" min="1" max="8"/>,
+  <LsdSlider key="1" width="300" multiple="4" min="1" max="8"/>,
   document.getElementById('lsd-slider-1')
 );
 
 ReactDOM.render(
-  <LsdSlider key="2" height="240"/>,
+  <LsdSlider key="2" height="240" multiple="3"/>,
   document.getElementById('lsd-slider-2')
 );
