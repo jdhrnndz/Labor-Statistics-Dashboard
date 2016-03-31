@@ -21,19 +21,17 @@
 *      top: [float] Changed when a vertical slider handle is being dragged.
 *      left: [float] Changed when a horizontal slider handle is being dragged.
 *    }
+*    dimension:  [JSON object] Offset dimension of the handle. {
+*	   width: [float] Obtained from offsetWidth HTML element property.
+*      height: [float] Obtained from offsetHeight HTML element property.
+*    }
+*    borderWidth: [float] Used for offset 
 *  Props:
 *    computeHandlePosition= [function] Used to get new position when dragging.
 *    computeHandleOffset= [function] Uses the offset height/width of handle.
 *    orientation: [string] "x" | "y" Determined by LsdSlider React Component.
 *    initialValue: [float] Used to show multiple handles evenly distributed 
 *                  across the slider initially.
-*  Attributes: (Values inserted into "this")
-*    dimension:  [JSON object] Offset dimension of the handle. {
-*	   width: [float] Obtained from offsetWidth HTML element property.
-*      height: [float] Obtained from offsetHeight HTML element property.
-*    }
-*    borderWidth: [float] Used for offset 
-*    handleOffset: [float] 
 */
 var LsdSliderHandle = React.createClass({
   /*
@@ -57,18 +55,14 @@ var LsdSliderHandle = React.createClass({
       position: {
         top: 0,
         left: 0
-      }
+      },
+      dimension: {
+        width: 0,
+        height: 0
+      },
+      borderWidth: 0
     };
   },  
-  componentWillMount: function() {
-  	/*
-  	*  Sort of inserting the dimension object/key onto 'this'
-  	*/
-  	this.dimension = {
-      width: 0,
-      height: 0
-    };
-  },
   componentDidMount: function() {
   	/*
     *  Binding dragStart to mousedown should also be here but:
@@ -84,32 +78,18 @@ var LsdSliderHandle = React.createClass({
     document.addEventListener("mouseup", this.dragStop);
 
     /*
-    *  this.componentInstance cannot be accessed before the component mounted.
-    */
-    this.dimension = {
+  	*  Get the real value of the handle element. It factors in the width of the
+  	*  border and padding.
+  	*/
+    var newDimension = {
       width: this.componentInstance.offsetWidth,
       height: this.componentInstance.offsetHeight
     };
 
-    this.borderWidth = parseInt(getComputedStyle(this.componentInstance).getPropertyValue("border-width"));
-  	this.handleOffset = this.props.computeHandleOffset(this.dimension);
-
     var handleOffset = this.props.computeHandleOffset(newDimension);
-
-    var newPosition =
-      (this.props.orientation == "x")?
-        {
-          top: -handleOffset,
-          left: this.props.enforcedValue-handleOffset
-        }:
-        {
-          top: this.props.enforcedValue-handleOffset,
-          left: -handleOffset
-        };
 
     this.setState({
       dimension: newDimension,
-      position: newPosition,
       borderWidth: parseInt(getComputedStyle(this.componentInstance).getPropertyValue("border-width"))
     });
   },
@@ -141,39 +121,25 @@ var LsdSliderHandle = React.createClass({
           x: event.pageX,
           y: event.pageY
         },
-        this.dimension
+        this.state.dimension
       );
-
-      // if(this.props.orientation == "x") {
-      //   this.setState({
-      //     position: {
-      //       left: handlePos.offsetValue
-      //     }
-      //   });
-      // }
-      // else {
-      //   this.setState({
-      //     position: {
-      //       top: handlePos.offsetValue
-      //     }
-      //   });
-      // }
     }
   },
   render: function() {
-  	/*
-  	*  The px unit has to do something with the visual offset of the handle.
-  	*
-  	*  TODO: Brace self for configurable handles hell. >:)
+    /*
+  	*  The long computation is for centering the handle with respect to the
+  	*  slider's orientation.
   	*/
+  	var handleOffset = this.props.computeHandleOffset(this.state.dimension);
+
     var style = (this.props.orientation == "x")?
       ({
-        left: this.props.enforcedValue-this.handleOffset + "%",
-        top: -(this.dimension.height-this.borderWidth)/2 + "px"
+        left: this.props.enforcedValue-handleOffset + "%",
+        top: -(this.state.dimension.height-this.state.borderWidth)/2 + "px"
       }):
       ({
-        top: this.props.enforcedValue-this.handleOffset + "%",
-        left: -(this.dimension.width-this.borderWidth)/2 + "px"
+        top: this.props.enforcedValue-handleOffset + "%",
+        left: -(this.state.dimension.width-this.state.borderWidth)/2 + "px"
       });
 
     return (
@@ -401,7 +367,7 @@ var LsdSlider = React.createClass({
 });
 
 ReactDOM.render(
-  <LsdSlider key="1" width="300" multiple="2000" min="1" max="8"/>,
+  <LsdSlider key="1" width="300" multiple="2" min="1" max="8"/>,
   document.getElementById('lsd-slider-1')
 );
 
