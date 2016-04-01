@@ -163,14 +163,16 @@ var LsdSliderHandle = React.createClass({
 /*
 *  LsdSliderRange React Component
 *  States:
-*
+*    none
 *  Props:
-*  
-*  NOTE: LsdSliderRange must only be shown when there are more than 1 handle.
-*  
-*  TODO: ^do this
+*    orientation: [string]
+*    position: [float]
+*    length: [float]
+*    dimension: [JSON Object] {
+*	   width: [float]
+*      height: [float]
+*    }
 */
-
 var LsdSliderRange = React.createClass({
   render: function() {
   	var style = (this.props.orientation == "x")?
@@ -186,7 +188,8 @@ var LsdSliderRange = React.createClass({
   	  };
     return (
       <div
-        className="lsd-slider-range" style={style}/>
+        className="lsd-slider-range"
+        style={style}/>
     );
   }
 });
@@ -368,6 +371,10 @@ var LsdSlider = React.createClass({
           enforcedValue={this.state.values[i]}/>
       );
 
+      /*
+      *  Could have placed a check if it is the last value to prevent undefined
+      *  diff (value for slider range), but the output is fine as it is.
+      */
       var diff = this.state.values[i+1] - this.state.values[i];
 
       ranges.push(
