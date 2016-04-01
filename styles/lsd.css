@@ -1,6 +1,7 @@
 body {
   background-color: #485451;
-  color: #adb6b9;
+  color: white;//#adb6b9;
+  font-family: 'Basic', sans-serif;
 }
 
 .lsd-slider {
