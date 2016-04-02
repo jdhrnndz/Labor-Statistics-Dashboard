@@ -1,0 +1,24 @@
+@font-face {
+  font-family: CanterBold3D;
+  src: url("../fonts/Canter Bold 3D.otf");
+}
+
+@font-face {
+  font-family: CanterBoldShadow;
+  src: url("../fonts/Canter Bold Shadow.otf");
+}
+
+@font-face {
+  font-family: CanterBoldStrips;
+  src: url("../fonts/Canter Bold Strips.otf");
+}
+
+@font-face {
+  font-family: CanterBold;
+  src: url("../fonts/Canter Bold.otf");
+}
+
+@font-face {
+  font-family: CanterLight;
+  src: url("../fonts/Canter Light.otf");
+}
