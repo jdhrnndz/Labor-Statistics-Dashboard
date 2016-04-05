@@ -32,55 +32,80 @@
         </script>
     </head>
     <body>
-        <h2> If you want to see your data on your next visit, use non-incognito/non-private browsing </h2>
-        <div id="data_scope">
-            <h1>
-                Data Scope
-                <select>   
-                    <option>by week</option>
-                    <option>by months</option>
-                    <option>by year</option>
-                </select>
-            </h1>
-        </div>
-        <div id="work_hour_trend">
-            <div id="lsd-slider-1" key="1"></div>
-            <div id="lsd-slider-2" key="2"></div>
-            <h1>Work Hour Trend</h1>
-            <p>area range chart, must be editable inline, an empty (placeholder) for new entries at the end of the chart, add animation when merging new data with the existing</p>
-        </div>
+        <div class="wrap container-fluid">
+            <h2> If you want to see your data on your next visit, use non-incognito/non-private browsing </h2>
+            <div id="data_scope">
+                <h1>
+                    Data Scope
+                    <select>   
+                        <option>by week</option>
+                        <option>by months</option>
+                        <option>by year</option>
+                    </select>
+                </h1>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box" id="work_hour_trend">
+                        <h1>Work Hour Trend</h1>
+                        <p>area range chart, must be editable inline, an empty (placeholder) for new entries at the end of the chart, add animation when merging new data with the existing</p>
+                        <div id="lsd-slider-1" key="1"></div>
+                        <div id="lsd-slider-2" key="2"></div>
+                    </div>
+                </div>
+            </div>
 
-        <div id="earliest_time_in">
-            <h1>Earliest Time-in</h1>
-        </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="box" id="earliest_time_in">
+                        <h1>Earliest Time-in</h1>
+                    </div>
+                </div>
 
-        <div id="latest_time_in">
-            <h1>Latest Time-in</h1>
-        </div>
+                <div class="col-xs-6">
+                    <div class="box" id="latest_time_in">
+                        <h1>Latest Time-in</h1>
+                    </div>
+                </div>
+            </div>
 
-        <div id="earliest_time_out">
-            <h1>Earliest Time-out</h1>
-        </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="box" id="earliest_time_out">
+                        <h1>Earliest Time-out</h1>
+                    </div>
+                </div>
 
-        <div id="latest_time_out">
-            <h1>Latest Time-out</h1>
-        </div>
+                <div class="col-xs-6">
+                    <div class="box" id="latest_time_out">
+                        <h1>Latest Time-out</h1>
+                    </div>
+                </div>
+            </div>
 
-        <div id="avg_work_hours">
-            <h1>Average Working Hours</h1>
-        </div>
-
-        <div id="leaves_available">
-            <h1>Leaves Available</h1>
-        </div>
-
-        <div id="meetings">
-            <h1>Meetings</h1>
-        </div>
-
-        <div id="form">
-            <h1>Add Time-in/Time-out Data</h1>
-            <p>Add new column in area range chart with slider input and a confirm button</p>
+            <div class="row">
+                <div class="col-xs-3">
+                    <div class="box" id="avg_work_hours">
+                        <h1>Average Working Hours</h1>
+                    </div>
+                </div>
+                <div class="col-xs-3">
+                    <div class="box" id="form">
+                        <h1>Add Time-in/Time-out Data</h1>
+                        <p>Add new column in area range chart with slider input and a confirm button</p>
+                    </div>
+                </div>
+                <div class="col-xs-3">
+                    <div class="box" id="sick_leaves">
+                        <h1>Sick Leaves Available</h1>
+                    </div>
+                </div>
+                <div class="col-xs-3">
+                    <div class="box" id="vacation_leaves">
+                        <h1>Vacation Leaves Available</h1>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <script type="text/babel" src="scripts/LsdSlider.js"></script>

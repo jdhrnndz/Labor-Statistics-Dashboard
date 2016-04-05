@@ -4,6 +4,10 @@ body {
   font-family: 'CanterBold', sans-serif;
 }
 
+.box {
+  border: solid 1px white;
+}
+
 .lsd-slider {
   position: relative;
   border-radius: 5px;
@@ -68,4 +72,15 @@ body {
   box-shadow: inset -2px -1px 0 0 #e89d1c;
   border-radius: 50%;
   z-index: 10;
+}
+
+.wrap {
+    box-sizing: border-box;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.container-fluid {
+    margin-right: auto;
+    margin-left: auto;
 }
