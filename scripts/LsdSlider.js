@@ -2,7 +2,7 @@
 *  Name: Labor Statistics Dashboard Custom Slider
 *  Author: John Denielle Hernandez
 *  Desc: Custom slider component similar to input of type range with some
-*    additional features such as multiple values and automatic orientation 
+*    additional features such as multiple values and automatic orientation
 *    detection.
 */
 
@@ -22,15 +22,15 @@
 *      left: [float] Changed when a horizontal slider handle is being dragged.
 *    }
 *    dimension:  [JSON object] Offset dimension of the handle. {
-*	   width: [float] Obtained from offsetWidth HTML element property.
+*      width: [float] Obtained from offsetWidth HTML element property.
 *      height: [float] Obtained from offsetHeight HTML element property.
 *    }
-*    borderWidth: [float] Used for offset 
+*    borderWidth: [float] Used for offset
 *  Props:
 *    computeHandlePosition= [function] Used to get new position when dragging.
 *    computeHandleOffset= [function] Uses the offset height/width of handle.
 *    orientation: [string] "x" | "y" Determined by LsdSlider React Component.
-*    initialValue: [float] Used to show multiple handles evenly distributed 
+*    initialValue: [float] Used to show multiple handles evenly distributed
 *                  across the slider initially.
 */
 var LsdSliderHandle = React.createClass({
@@ -38,7 +38,7 @@ var LsdSliderHandle = React.createClass({
   *  TODO: Fix warning -> "getInitialState was defined on LsdSlider, a plain
   *  JavaScript class. This is only supported for classes created using
   *  React.createClass. Did you mean to define a state property instead?".
-  *  
+  *
   *  TODO: Fix bug, resizing window breaks offset of handle in vertical slider.
   *  The horizontal slider seems to be clear of this bug.
   *
@@ -46,7 +46,7 @@ var LsdSliderHandle = React.createClass({
   *        handle offset computation using the borderWidth state.
   *
   *  TODO: Refactor all code that relies on orientation. Eliminate redundancy.
-  * 
+  *
   *  TODO: Try Using ReactLink
   */
   getInitialState: function() {
@@ -63,9 +63,9 @@ var LsdSliderHandle = React.createClass({
       borderWidth: 0,
       handleOffset: 0
     };
-  },  
+  },
   componentDidMount: function() {
-  	/*
+    /*
     *  Binding dragStart to mousedown should also be here but:
     *  onMouseDown > refs (by simplicity).
     *  Take note that I add the event listener to the document element because:
@@ -79,9 +79,9 @@ var LsdSliderHandle = React.createClass({
     document.addEventListener("mouseup", this.dragStop);
 
     /*
-  	*  Get the real value of the handle element. It factors in the width of the
-  	*  border and padding.
-  	*/
+    *  Get the real value of the handle element. It factors in the width of the
+    *  border and padding.
+    */
     var newDimension = {
       width: this.componentInstance.offsetWidth,
       height: this.componentInstance.offsetHeight
@@ -96,7 +96,7 @@ var LsdSliderHandle = React.createClass({
     });
   },
   componentWillUnmount: function(){
-  	document.removeEventListener("mousemove", this.dragEvent);
+    document.removeEventListener("mousemove", this.dragEvent);
     document.removeEventListener("mouseup", this.dragStop);
   },
   dragStart: function() {
@@ -118,7 +118,7 @@ var LsdSliderHandle = React.createClass({
       if(event.preventDefault) event.preventDefault();
 
       var handlePos = this.props.computeHandlePosition(
-      	this.props.id,
+        this.props.id,
         {
           x: event.pageX,
           y: event.pageY
@@ -129,9 +129,9 @@ var LsdSliderHandle = React.createClass({
   },
   render: function() {
     /*
-  	*  The long computation is for centering the handle with respect to the
-  	*  slider's orientation.
-  	*/
+    *  The long computation is for centering the handle with respect to the
+    *  slider's orientation.
+    */
 
     var style = (this.props.orientation == "x")?
       ({
@@ -169,23 +169,23 @@ var LsdSliderHandle = React.createClass({
 *    position: [float]
 *    length: [float]
 *    dimension: [JSON Object] {
-*	   width: [float]
+*      width: [float]
 *      height: [float]
 *    }
 */
 var LsdSliderRange = React.createClass({
   render: function() {
-  	var style = (this.props.orientation == "x")?
-  	  {
-  	  	width: this.props.length + "%",
-  	  	height: this.props.dimension.height + "px",
-  	  	left: this.props.position + "%"
-  	  }:
-  	  {
-  	  	width: this.props.dimension.width + "px",
-  	  	height: this.props.length + "%",
-  	  	top: this.props.position + "%"
-  	  };
+    var style = (this.props.orientation == "x")?
+      {
+        width: this.props.length + "%",
+        height: this.props.dimension.height + "px",
+        left: this.props.position + "%"
+      }:
+      {
+        width: this.props.dimension.width + "px",
+        height: this.props.length + "%",
+        top: this.props.position + "%"
+      };
     return (
       <div
         className="lsd-slider-range"
@@ -200,7 +200,7 @@ var LsdSliderRange = React.createClass({
 *    position: [JSON object] {
 *      top: [float]
 *      left: [float]
-*    orientation: [string] 
+*    orientation: [string]
 *    }
 *  Props:
 *    width: [float] Used in normalization of mouse coords - horizontal.
@@ -221,31 +221,31 @@ var LsdSlider = React.createClass({
         left: 0
       },
       dimension: {
-      	width: 0,
-      	height: 0
+        width: 0,
+        height: 0
       },
       orientation: "",
       values: []
     };
   },
   componentWillMount: function() {
-  	if(!(this.props.width || this.props.height)){
+    if(!(this.props.width || this.props.height)){
       console.error("Warning: LsdSlider's width and height properties are both null. Please declare at least one property.");
-  	}
+    }
 
-  	var correctWidth = parseInt(this.props.width) || 5;
-  	var correctHeight = parseInt(this.props.height) || 5;
+    var correctWidth = parseInt(this.props.width) || 5;
+    var correctHeight = parseInt(this.props.height) || 5;
 
     /*
     *  Computation for distributing multiple handles evenly along the slider.
     */
-  	var handleCount = this.props.multiple || 1;
-  	var percentInterval = (handleCount > 1)?100/(handleCount-1):0;
-  	var values = [];
+    var handleCount = this.props.multiple || 1;
+    var percentInterval = (handleCount > 1)?100/(handleCount-1):0;
+    var values = [];
 
-  	for(var i=0; i<handleCount; i++){
-  		values.push(percentInterval*i);
-  	}
+    for(var i=0; i<handleCount; i++){
+      values.push(percentInterval*i);
+    }
 
     /*
     *  Automatic orientation identification lmao.
@@ -255,8 +255,8 @@ var LsdSlider = React.createClass({
 
     this.setState({
       dimension: {
-      	width: correctWidth,
-      	height: correctHeight
+        width: correctWidth,
+        height: correctHeight
       },
       orientation: orientation,
       handleCount: handleCount,
@@ -272,7 +272,7 @@ var LsdSlider = React.createClass({
 
     this.setState({
       position: {
-      	top: componentPosition.top,
+        top: componentPosition.top,
         left: componentPosition.left
       }
     });
@@ -297,17 +297,17 @@ var LsdSlider = React.createClass({
       return ((handleDimension.height/2)/this.state.dimension.height)*100;
   },
   applyThreshold: function(value) {
-  	/*
-  	*  Percentage only in here that's why min == 0 and max == 100.
-  	*  Actual value with respect to the min/max parameters would be computed
-  	*  somewhere else.
-  	*/
+    /*
+    *  Percentage only in here that's why min == 0 and max == 100.
+    *  Actual value with respect to the min/max parameters would be computed
+    *  somewhere else.
+    */
     return (value<0)?0:((value>100)?100:value);
   },
   computeHandlePosition: function(handleId, mouseCoords, handleDimension) {
     /*
-  	*  NOTE: When adding support for min/max parameters, compute it here.
-  	*/
+    *  NOTE: When adding support for min/max parameters, compute it here.
+    */
     var realValue = this.normalizeMouse(mouseCoords, handleDimension);
     realValue = this.applyThreshold(realValue);
     var offsetValue = realValue-this.computeHandleOffset(handleDimension);
@@ -350,8 +350,8 @@ var LsdSlider = React.createClass({
     /*
     *  Sets orientation based on dimension.
     *  By default, a slider's rail is 5px thick.
-    *  
-    *  TODO: 
+    *
+    *  TODO:
     */
     var style = (this.state.orientation == "x")?
       ({width: this.props.width + "px", height: this.state.dimension.height + "px"}):
@@ -359,7 +359,7 @@ var LsdSlider = React.createClass({
 
     var handles = [];
     var ranges = [];
-    
+
     for(var i=0; i<this.state.handleCount; i++){
       handles.push(
         <LsdSliderHandle
@@ -378,12 +378,12 @@ var LsdSlider = React.createClass({
       var diff = this.state.values[i+1] - this.state.values[i];
 
       ranges.push(
-      	<LsdSliderRange
-      	  key={i}
-      	  orientation={this.state.orientation}
-      	  length={diff}
-      	  position={this.state.values[i]}
-      	  dimension={this.state.dimension}/>
+        <LsdSliderRange
+          key={i}
+          orientation={this.state.orientation}
+          length={diff}
+          position={this.state.values[i]}
+          dimension={this.state.dimension}/>
       )
     }
 
