@@ -32,18 +32,24 @@
         </script>
     </head>
     <body>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="header">
+                <div class="box">
+                    <h1>Labor Statistics Dashboard</h1>
+
+                    <div id="data_scope">
+                        Data Scope
+                        <select>   
+                            <option>by week</option>
+                            <option>by months</option>
+                            <option>by year</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="wrap container-fluid">
             <h2> If you want to see your data on your next visit, use non-incognito/non-private browsing </h2>
-            <div id="data_scope">
-                <h1>
-                    Data Scope
-                    <select>   
-                        <option>by week</option>
-                        <option>by months</option>
-                        <option>by year</option>
-                    </select>
-                </h1>
-            </div>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="box" id="work_hour_trend">
@@ -106,15 +112,14 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="box" id="footer">
-                        <h1>Footer</h1>
-                    </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="box" id="footer">
+                    <h1>Footer</h1>
                 </div>
             </div>
-
         </div>
 
         <script type="text/babel" src="scripts/LsdSlider.js"></script>
