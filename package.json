@@ -1,0 +1,22 @@
+{
+  "name": "labor-statistics-dashboard",
+  "version": "1.0.0",
+  "description": "This project uses employees' work related data such as time-in/time-out, number of vacation and sick leaves, number of meetings, etc. and displays them all in a single webpage.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jdhrnndz/Labor-Statistics-Dashboard.git"
+  },
+  "keywords": [
+    "utility"
+  ],
+  "author": "jdhrnndz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jdhrnndz/Labor-Statistics-Dashboard/issues"
+  },
+  "homepage": "https://github.com/jdhrnndz/Labor-Statistics-Dashboard#readme"
+}
