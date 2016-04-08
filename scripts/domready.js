@@ -1,4 +1,3 @@
-(function(){
 
     var DomReady = window.DomReady = {};
 
@@ -127,7 +126,7 @@
 	};
 
 	// This is the public function that people can use to hook up ready.
-	DomReady.ready = function(fn, args) {
+	module.exports = function(fn, args) {
 		// Attach the listeners
 		bindReady();
     
@@ -143,4 +142,3 @@
     
 	bindReady();
 	
-})();
