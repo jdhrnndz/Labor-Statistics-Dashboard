@@ -6,30 +6,8 @@
         <link rel='stylesheet' href="fonts/Canter.css" type='text/css'>
         <meta charset="UTF-8"/>
         <title>LSD</title>
-        <script src="scripts/domready.js"></script>
-        <script src="build/react.js"></script>
-        <script src="build/react-dom.js"></script>
-        <script src="build/react-with-addons.min.js"></script>
-        <script src="build/browser.min.js"></script>
+        <script src="./node_modules/react/dist/react-with-addons.js"></script>
         <link rel="stylesheet" href="styles/lsd.css"/>
-
-        <script>
-          DomReady.ready(function(){
-            cumulativeOffset = function(element) {
-              var top = 0, left = 0;
-              do {
-                top += element.offsetTop  || 0;
-                left += element.offsetLeft || 0;
-                element = element.offsetParent;
-              } while(element);
-
-              return ({
-                top: top,
-                left: left
-              });
-            }
-          });
-        </script>
     </head>
     <body>
         <div class="row">
@@ -122,6 +100,8 @@
             </div>
         </div>
 
-        <script type="text/babel" src="scripts/LsdSlider.js"></script>
+        <script src="http://localhost:8090/webpack-dev-server.js"></script>
+
+        <script type="text/javascript" src="http://localhost:8090/build/bundle.js"></script>
     </body>
 </html>
