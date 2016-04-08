@@ -12,6 +12,10 @@
 *  TODO: Apply prop validation
 */
 
+'use strict'
+
+var React = require('react')
+
 /*
 *  LsdSliderHandle React Component
 *  States:
@@ -213,7 +217,7 @@ var LsdSliderRange = React.createClass({
 *        Do this instead, receive alignment prop with values:
 *        left/top, middle, right/bottom. default is left/top.
 */
-var LsdSlider = React.createClass({
+module.exports = React.createClass({
   getInitialState: function() {
     return {
       position: {
@@ -268,7 +272,7 @@ var LsdSlider = React.createClass({
     *  Identify the position of this component after it has been rendered on
     *  the DOM. This state is passed to LsdSliderHandle.
     */
-    var componentPosition = cumulativeOffset(this.componentInstance);
+    var componentPosition = this.props.cumulativeOffset(this.componentInstance);
 
     this.setState({
       position: {
@@ -398,13 +402,3 @@ var LsdSlider = React.createClass({
     );
   }
 });
-
-ReactDOM.render(
-  <LsdSlider key="1" width="300" multiple="4" min="1" max="8"/>,
-  document.getElementById('lsd-slider-1')
-);
-
-ReactDOM.render(
-  <LsdSlider key="2" height="240" multiple="3"/>,
-  document.getElementById('lsd-slider-2')
-);
