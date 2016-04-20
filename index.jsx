@@ -4,7 +4,6 @@
 var React = require('react')
 var ReactDOM = require('react-dom')
 var LsdSlider = require('./scripts/LsdSlider.jsx')
-var DomReady = require('./scripts/domready.js')
 
 var cumulativeOffset = function(element) {
     var top = 0, left = 0;
