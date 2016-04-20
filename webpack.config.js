@@ -1,20 +1,37 @@
+var path = require('path');
+
 module.exports = {
-  // entry: {
-  //   index: './index.jsx',
-  //   lsd_slider: './scripts/LsdSlider.jsx',
-  //   domready: './scripts/domready.js'
-  // },
-  entry: './index.jsx',
+  cache: true,
+  context: path.join(__dirname, ""),
+  entry: ["./index.jsx"],
   output: {
-    filename: 'bundle.js',
-    publicPath: 'http://localhost:8090/build'
+    filename: "./build/bundle.js",
+    sourceMapFilename: "./build/bundle.map"
   },
+  devtool: '#source-map',
   module: {
-    loaders: [{
-      //tell webpack to use jsx-loader for all *.jsx files
-      test: /\.jsx$/,
-      loader: 'jsx-loader?insertPragma=React.DOM&harmony'
-    }]
+    loaders: [
+      {
+        loader: 'jsx-loader?insertPragma=React.DOM&harmony',
+        test: /\.jsx$/
+      },
+      {
+        loader: 'babel',
+        test: /\.js?$/,
+        exclude: /(node_modules|bower_components)/,
+        query: {
+          presets: ['react', 'es2015', 'stage-2']
+        }
+      },
+      {
+        loader: "style!css!less",
+        test: /\.less$/
+      },
+      {
+        loader: "file-loader?name=assets/imgs/img-[hash:6].[ext]",
+        test: /\.(png|jpg|gif)$/
+      }
+    ]
   },
   externals: {
     //don't bundle the 'react' npm package with our bundle.js
@@ -22,6 +39,7 @@ module.exports = {
     'react': 'React'
   },
   resolve: {
+    root: path.resolve('./client'),
     extensions: ['', '.js', '.jsx']
   }
 }

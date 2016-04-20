@@ -23,6 +23,7 @@
   "homepage": "https://github.com/jdhrnndz/Labor-Statistics-Dashboard#readme",
   "dependencies": {
     "babel-preset-react": "^6.5.0",
+    "path": "^0.12.7",
     "react": "^0.14.8",
     "react-dom": "^0.14.8"
   },
